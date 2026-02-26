@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIN Calculator | Urbaser Sumeet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --primary-light: #4CAF50;
+            --secondary: #FF9800;
+            --dark: #1B5E20;
+            --light: #E8F5E9;
+            --gray: #757575;
+            --light-gray: #f5f5f5;
+            --wet-green: #2E7D32;
+            --wet-green-light: #E8F5E9;
+            --wet-green-dark: #1B5E20;
+            --dry-blue: #1976D2;
+            --dry-blue-light: #E3F2FD;
+            --dry-blue-dark: #0D47A1;
+            --white: #ffffff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --radius: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background: transparent;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .calculator-card {
+            width: 100%;
+            max-width: 550px;
+            margin: 0 auto;
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: var(--dark);
+            color: white;
+            padding: 18px 24px;
+        }
+
+        .card-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header h2 i {
+            color: var(--secondary);
+            font-size: 1.8rem;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* Info Box */
+        .info-box {
+            background-color: var(--light);
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .info-box p {
+            color: var(--dark);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Household Input Section */
+        .input-section {
+            background-color: #f9f9f9;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #eaeaea;
+        }
+
+        .input-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-title i {
+            color: var(--secondary);
+        }
+
+        .input-field {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .input-field label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .input-field label i {
+            color: var(--secondary);
+            font-size: 0.95rem;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            background-color: white;
+        }
+
+        .input-field input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .input-field input::placeholder {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* Auto-calculate badge */
+        .auto-calc-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: #f0f0f0;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .auto-calc-badge i {
+            color: var(--secondary);
+        }
+
+        /* Results Section */
+        .results-section {
+            margin-top: 10px;
+        }
+
+        .results-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .results-title i {
+            color: var(--secondary);
+        }
+
+        /* Totals Row */
+        .totals-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .total-box {
+            flex: 1;
+            min-width: 140px;
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            border: 1px solid #eaeaea;
+        }
+
+        .total-box.wet {
+            border-top: 4px solid var(--wet-green);
+        }
+
+        .total-box.dry {
+            border-top: 4px solid var(--dry-blue);
+        }
+
+        .total-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .total-label i {
+            font-size: 0.9rem;
+        }
+
+        .total-label.wet i {
+            color: var(--wet-green);
+        }
+
+        .total-label.dry i {
+            color: var(--dry-blue);
+        }
+
+        .total-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .total-value.wet {
+            color: var(--wet-green-dark);
+        }
+
+        .total-value.dry {
+            color: var(--dry-blue-dark);
+        }
+
+        .total-unit {
+            font-size: 0.85rem;
+            color: #999;
+            margin-left: 2px;
+        }
+
+        /* Bin Images Section - Place your image here */
+        .bin-images-section {
+            margin-bottom: 25px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #eaeaea;
+            background-color: #f9f9f9;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .bin-images-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            color: var(--dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .bin-images-title i {
+            color: var(--secondary);
+        }
+
+       
+
+        
+
+        /* Table - Capacity column removed */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid #eaeaea;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--white);
+            font-size: 0.9rem;
+            min-width: 400px;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            padding: 14px 10px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .bin-type {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .wet-result {
+            color: var(--wet-green-dark);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .wet-result i {
+            color: var(--wet-green);
+            font-size: 0.8rem;
+        }
+
+        .dry-result {
+            color: var(--dry-blue-dark);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .dry-result i {
+            color: var(--dry-blue);
+            font-size: 0.8rem;
+        }
+
+        .total-result {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Note Box */
+        .note-box {
+            background-color: var(--light);
+            border-radius: 12px;
+            padding: 16px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .note-box h5 {
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 6px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.95rem;
+        }
+
+        .note-box h5 i {
+            color: var(--secondary);
+        }
+
+        .note-box p {
+            color: var(--gray);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        .card-footer {
+            background-color: #f9f9f9;
+            padding: 16px 24px;
+            text-align: center;
+            border-top: 1px solid #eaeaea;
+        }
+
+        .footer-text {
+            font-size: 0.85rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .footer-text i {
+            color: #ff6b6b;
+            animation: heartbeat 1.5s ease infinite;
+        }
+
+        .footer-text .highlight {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Responsive for all devices */
+        @media (max-width: 600px) {
+            .card-header h2 {
+                font-size: 1.4rem;
+            }
+            
+            .card-body {
+                padding: 18px;
+            }
+            
+            .input-section {
+                padding: 16px;
+            }
+            
+            .totals-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .total-box {
+                min-width: 100%;
+            }
+            
+            .total-value {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            body {
+                padding: 10px;
+            }
+            
+            .card-header {
+                padding: 15px 18px;
+            }
+            
+            .card-header h2 {
+                font-size: 1.2rem;
+            }
+            
+            .card-body {
+                padding: 15px;
+            }
+            
+            .input-field input {
+                padding: 10px 12px;
+            }
+        }
+
+        /* Landscape mode */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 10px;
+            }
+            
+            .calculator-card {
+                max-width: 90%;
+            }
+            
+            .totals-row {
+                flex-direction: row;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-card">
+        <div class="card-header">
+            <h2>
+                <i class="fas fa-calculator"></i> 
+                BIN Calculator
+            </h2>
+        </div>
+        
+        <div class="card-body">
+            <!-- Info Box -->
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <p>Enter number of households (1kg wet + 1kg dry per household)</p>
+            </div>
+            
+            <!-- Household Input Section -->
+            <div class="input-section">
+                <div class="input-title">
+                    <i class="fas fa-home"></i>
+                    <span>Household Details</span>
+                </div>
+                
+                <div class="input-field">
+                    <label for="households">
+                        <i class="fas fa-users"></i>
+                        <span>Number of Households</span>
+                    </label>
+                    <input type="number" id="households" min="0" step="1" placeholder="e.g., 100" oninput="calculateFromHouseholds()">
+                </div>
+                
+                <div class="auto-calc-badge">
+                    <i class="fas fa-bolt"></i> Results update automatically
+                </div>
+            </div>
+            
+            <!-- Totals Display -->
+            <div class="results-section">
+                <div class="results-title">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Waste Summary</span>
+                </div>
+                
+                <div class="totals-row">
+                    <!-- Total Wet -->
+                    <div class="total-box wet">
+                        <div class="total-label wet">
+                            <i class="fas fa-trash"></i>
+                            <span>Total Wet Waste</span>
+                        </div>
+                        <div class="total-value wet" id="totalWetDisplay">0</div>
+                        <span class="total-unit">KG</span>
+                    </div>
+                    
+                    <!-- Total Dry -->
+                    <div class="total-box dry">
+                        <div class="total-label dry">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>Total Dry Waste</span>
+                        </div>
+                        <div class="total-value dry" id="totalDryDisplay">0</div>
+                        <span class="total-unit">KG</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Table - Capacity column removed -->
+            <div class="results-section">
+                <div class="results-title">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Bin Requirements</span>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Bin Type</th>
+                                <th>Wet Bins</th>
+                                <th>Dry Bins</th>
+                                <th>Total Bins</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 120L Bin -->
+                            <tr>
+                                <td class="bin-type">120L</td>
+                                <td>
+                                    <span class="wet-result">
+                                        <i class="fas fa-trash"></i>
+                                        <span id="wet120">0</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="dry-result">
+                                        <i class="fas fa-trash-alt"></i>
+                                        <span id="dry120">0</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="total-result" id="total120">0</span>
+                                </td>
+                            </tr>
+                            
+                            <!-- 240L Bin -->
+                            <tr>
+                                <td class="bin-type">240L</td>
+                                <td>
+                                    <span class="wet-result">
+                                        <i class="fas fa-trash"></i>
+                                        <span id="wet240">0</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="dry-result">
+                                        <i class="fas fa-trash-alt"></i>
+                                        <span id="dry240">0</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="total-result" id="total240">0</span>
+                                </td>
+                            </tr>
+                            
+                            <!-- 1100L Bin -->
+                            <tr>
+                                <td class="bin-type">1100L</td>
+                                <td>
+                                    <span class="wet-result">
+                                        <i class="fas fa-trash"></i>
+                                        <span id="wet1100">0</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="dry-result">
+                                        <i class="fas fa-trash-alt"></i>
+                                        <span id="dry1100">0</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="total-result" id="total1100">0</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Bin Images Section - Place your image here (above Note box) -->
+                <div class="bin-images-section">
+                    <div class="bin-images-title">
+                        <i class="fas fa-image"></i>
+                        <span>Bin Size Reference</span>
+                    </div>
+                    <!-- To add your actual image, replace the div above with: -->
+                    <img src="https://photos.app.goo.gl/KNmmLYYLJ361Czy57" alt="Bin Size Reference" style="width: 100%; border-radius: 12px;">
+                </div>
+                
+                <!-- Note -->
+                <div class="note-box">
+                    <h5><i class="fas fa-clipboard-list"></i> Note</h5>
+                    <p>From the above three Bin types available in the market, you may choose the one that best suits your usage and handling requirements.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="card-footer">
+            <div class="footer-text">
+                <i class="fas fa-heart"></i> Made by 
+                <span class="highlight">Vasanthaprakash</span> - 
+                <span class="highlight">IT Department</span> - 
+                <span class="highlight">Urbaser Sumeet</span>
+                <i class="fas fa-heart"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to calculate from households only
+        function calculateFromHouseholds() {
+            const households = parseFloat(document.getElementById('households').value) || 0;
+            
+            // Calculate waste based on 1kg per household
+            const wetWaste = households * 1;
+            const dryWaste = households * 1;
+            
+            // Update total displays
+            document.getElementById('totalWetDisplay').textContent = wetWaste;
+            document.getElementById('totalDryDisplay').textContent = dryWaste;
+            
+            // Calculate bins for all types
+            calculateAllBins(wetWaste, dryWaste);
+        }
+
+        // Function to calculate bins for all types
+        function calculateAllBins(wetWaste, dryWaste) {
+            // Bin capacities
+            const bins = [
+                { type: '120L', wetCap: 18, dryCap: 14.4 },
+                { type: '240L', wetCap: 36, dryCap: 28.8 },
+                { type: '1100L', wetCap: 150, dryCap: 120 }
+            ];
+            
+            // Calculate for each bin type
+            bins.forEach(bin => {
+                // Calculate bins needed for wet waste (round up)
+                const wetBins = wetWaste > 0 ? Math.ceil(wetWaste / bin.wetCap) : 0;
+                
+                // Calculate bins needed for dry waste (round up)
+                const dryBins = dryWaste > 0 ? Math.ceil(dryWaste / bin.dryCap) : 0;
+                
+                // Total bins
+                const totalBins = wetBins + dryBins;
+                
+                // Update the table
+                if (bin.type === '120L') {
+                    document.getElementById('wet120').textContent = wetBins;
+                    document.getElementById('dry120').textContent = dryBins;
+                    document.getElementById('total120').textContent = totalBins;
+                } else if (bin.type === '240L') {
+                    document.getElementById('wet240').textContent = wetBins;
+                    document.getElementById('dry240').textContent = dryBins;
+                    document.getElementById('total240').textContent = totalBins;
+                } else if (bin.type === '1100L') {
+                    document.getElementById('wet1100').textContent = wetBins;
+                    document.getElementById('dry1100').textContent = dryBins;
+                    document.getElementById('total1100').textContent = totalBins;
+                }
+            });
+        }
+
+        // Add input event listener
+        document.getElementById('households').addEventListener('input', calculateFromHouseholds);
+
+        // Initialize with empty values
+        window.onload = function() {
+            document.getElementById('households').value = '';
+            document.getElementById('totalWetDisplay').textContent = '0';
+            document.getElementById('totalDryDisplay').textContent = '0';
+            
+            // Reset all results to 0
+            document.getElementById('wet120').textContent = '0';
+            document.getElementById('dry120').textContent = '0';
+            document.getElementById('total120').textContent = '0';
+            document.getElementById('wet240').textContent = '0';
+            document.getElementById('dry240').textContent = '0';
+            document.getElementById('total240').textContent = '0';
+            document.getElementById('wet1100').textContent = '0';
+            document.getElementById('dry1100').textContent = '0';
+            document.getElementById('total1100').textContent = '0';
+        };
+    </script>
+</body>
+</html>
